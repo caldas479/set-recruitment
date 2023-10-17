@@ -5,41 +5,43 @@ interface ITodo {
 }
 
 class Todo {
-  todos: Array<ITodo>;
+  _todos: Record<number, ITodo>;
 
   constructor() {
-    this.todos = new Array();
+    this._todos = new Array();
   }
 
   idExists(id: number): boolean {
-    return this.todos.some((todo) => todo.id === id);
+    return id in this._todos;
   }
 
   getToDos() {
-    return this.todos;
+    return Object.values(this._todos);
   }
 
   getToDoById(id: number): ITodo {
-    return this.todos[id];
+    return this._todos[id];
   }
 
   addToDo(text: string): ITodo {
+    const newId = Object.keys(this._todos).length + 1;
     const newTodo: ITodo = {
-      id: this.todos.length + 1,
+      id: newId,
       text,
       completed: false,
     };
-    this.todos.push(newTodo);
+    this._todos[newId] = newTodo;
     return newTodo;
   }
 
   updateToDo(id: number, newText: string): ITodo{
-    this.todos[id].text = newText;
-    return this.todos[id];
+    this._todos[id].text = newText;
+    return this._todos[id];
   }
 
   deleteToDo(id: number): ITodo {
-    const deletedTodo = this.todos.splice(id, 1)[0];
+    const deletedTodo = this._todos[id];
+    delete this._todos[id];
     return deletedTodo;
   }
 }
