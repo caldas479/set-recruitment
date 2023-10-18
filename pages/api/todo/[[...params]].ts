@@ -1,6 +1,7 @@
 import { createHandler, Get, Param, Patch, Post, Body, Delete, ValidationPipe, NotFoundException} from "next-api-decorators";
 import { TodoService } from "@/lib/backend/services";
-import { ToDoDTO } from "@/dto/ToDoDTO";
+import { CreateToDoDTO } from "@/dto/CreateToDoDTO";
+import { UpdateToDoDTO } from "@/dto/UpdateToDoDTO";
 
 class TodoHandler {
   @Get()
@@ -17,25 +18,20 @@ class TodoHandler {
   }
 
   @Post()
-  addToDo(@Body(ValidationPipe) body: ToDoDTO) {
-    const newTodo = TodoService.addToDo(body.text);
-    return newTodo;
+  addToDo(@Body(ValidationPipe) body: CreateToDoDTO) {
+    return TodoService.addToDo(body.text);
+    
   }
 
   @Patch("/:id")
-  updateToDoText(@Param("id") id: number, @Body(ValidationPipe) body: ToDoDTO) {
+  updateToDo(@Param("id") id: number, @Body(ValidationPipe) body: UpdateToDoDTO) {
     if(!TodoService.idExists(id)){
       throw new NotFoundException('Task not found.');
+    }
+    if(body.text === undefined){
+      return TodoService.updateToDoState(id);
     }
     return TodoService.updateToDoText(id, body.text);
-  }
-
-  @Patch("/:id")
-  updateToDoState(@Param("id") id: number) {
-    if(!TodoService.idExists(id)){
-      throw new NotFoundException('Task not found.');
-    }
-    return TodoService.updateToDoState(id);
   }
 
   @Delete("/:id") 

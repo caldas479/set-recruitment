@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class ToDoDTO {
-    @IsNotEmpty()  
+export class CreateToDoDTO {
+    @IsNotEmpty() 
     text: string;
 }
