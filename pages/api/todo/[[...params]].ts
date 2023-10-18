@@ -1,6 +1,6 @@
-import { createHandler, Get, Param, Patch, Post, Req, Delete} from "next-api-decorators";
-
+import { createHandler, Get, Param, Patch, Post, Body, Delete, ValidationPipe, NotFoundException} from "next-api-decorators";
 import { TodoService } from "@/lib/backend/services";
+import { ToDoDTO } from "@/dto/ToDoDTO";
 
 class TodoHandler {
   @Get()
@@ -10,46 +10,40 @@ class TodoHandler {
 
   @Get("/:id")
   getToDoById(@Param("id") id: number) {
-      if(TodoService.idExists(id)){
-        return TodoService.getToDoById(id);
-      }
-      else {
-        return {
-          error: "To-do item not found",
-        };
-      }
+    if(!TodoService.idExists(id)){
+      throw new NotFoundException('Task not found.');
+    }
+    return TodoService.getToDoById(id);
   }
 
   @Post()
-  addToDo() {
-    const text = "ir ao gym"
-    const newTodo = TodoService.addToDo(text);
+  addToDo(@Body(ValidationPipe) body: ToDoDTO) {
+    const newTodo = TodoService.addToDo(body.text);
     return newTodo;
   }
 
   @Patch("/:id")
-  updateToDo(@Param("id") id: number) {
-    if(TodoService.idExists(id)){
-      const text = "ir as compras"
-      return TodoService.updateToDo(id,text);
+  updateToDoText(@Param("id") id: number, @Body(ValidationPipe) body: ToDoDTO) {
+    if(!TodoService.idExists(id)){
+      throw new NotFoundException('Task not found.');
     }
-    else {
-      return {
-        error: "To-do item not found",
-      };
+    return TodoService.updateToDoText(id, body.text);
+  }
+
+  @Patch("/:id")
+  updateToDoState(@Param("id") id: number) {
+    if(!TodoService.idExists(id)){
+      throw new NotFoundException('Task not found.');
     }
+    return TodoService.updateToDoState(id);
   }
 
   @Delete("/:id") 
   deleteToDo(@Param("id") id: number) {
-    if(TodoService.idExists(id)){
-      return TodoService.deleteToDo(id);
+    if(!TodoService.idExists(id)){
+      throw new NotFoundException('Task not found.');
     }
-    else {
-      return {
-        error: "To-do item not found",
-      };
-    }
+    return TodoService.deleteToDo(id);
   }
 }
 
