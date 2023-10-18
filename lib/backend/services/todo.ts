@@ -1,7 +1,7 @@
 interface ITodo {
   id: number;
   text: string;
-  completed: boolean;
+  state: boolean;
 }
 
 class Todo {
@@ -28,14 +28,19 @@ class Todo {
     const newTodo: ITodo = {
       id: newId,
       text,
-      completed: false,
+      state: false,
     };
     this._todos[newId] = newTodo;
     return newTodo;
   }
 
-  updateToDo(id: number, newText: string): ITodo{
+  updateToDoText(id: number, newText: string): ITodo{
     this._todos[id].text = newText;
+    return this._todos[id];
+  }
+
+  updateToDoState(id: number): ITodo{
+    this._todos[id].state = !this._todos[id].state;
     return this._todos[id];
   }
 
