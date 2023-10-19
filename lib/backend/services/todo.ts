@@ -34,13 +34,12 @@ class Todo {
     return newTodo;
   }
 
-  updateToDoText(id: number, newText: string): ITodo{
-    this._todos[id].text = newText;
-    return this._todos[id];
-  }
+  updateToDo(id: number, todo: Partial<ITodo>): ITodo {
+    this._todos[id] = {
+      ...this._todos[id],
+      ...todo,
+    };
 
-  updateToDoState(id: number): ITodo{
-    this._todos[id].state = !this._todos[id].state;
     return this._todos[id];
   }
 
